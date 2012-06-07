@@ -1,0 +1,15 @@
+name: RandomPlacer
+version: 1.0.0
+main: me.zippy120.RandomPlacer
+
+commands:
+  tpr: 
+    description: Teleports you to a random location
+    permission: RandomPlacer
+    alaises: tprandom 
+    usage: /tpr
+    
+permissions: 
+  RandomPlacer:
+    default: true
+    
