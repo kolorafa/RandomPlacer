@@ -1,5 +1,7 @@
 package me.zippy120;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -14,7 +16,10 @@ public class RandomPlacer extends JavaPlugin {
 	
 	Logger log;
 	Random r = new Random();
- 
+	public Map<Player, Boolean> getHash(){
+	Map<Player, Boolean> allowTP = new HashMap<Player, Boolean>();
+	return allowTP;
+	}
 	public void onEnable(){
 		log = this.getLogger();
 		log.info("Your plugin has been enabled!");
@@ -26,9 +31,10 @@ public class RandomPlacer extends JavaPlugin {
 	 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
-				if(cmd.getName().equalsIgnoreCase("tpr")){
+	if ((sender instanceof Player)) {
+		Player player = (Player) sender;
+			if(cmd.getName().equalsIgnoreCase("tpr")){
+					if ((boolean) getHash().get(player)){
 					int xlimit;
 					int zlimit;
 					int nxlimit;
@@ -65,15 +71,21 @@ public class RandomPlacer extends JavaPlugin {
 					Location l = new Location(player.getWorld(), x, y, z);	
 						player.teleport(l);
 						(player).sendMessage(ChatColor.GOLD + "[RandomPlacer]: " + ChatColor.YELLOW + getConfig().getString("Teleported") + " " + x + ", " + z);
+						getHash().put(player, false);
+						try {
+							Thread.sleep(getConfig().getInt("RandomPlacer.Cooldown") * 1000);
+						} catch (InterruptedException e) {}
+						getHash().put(player, true);
 						return true;
-				}
-					} else { 
-						log.info(getConfig().getString("Error.ConsoleSender"));
+						} else player.sendMessage(ChatColor.GOLD + "[RandomPlacer]: " + ChatColor.RED + "You must wait for RandomPlacer to cool down! The cool down is " +  getConfig().getInt("RandomPlacer.Cooldown"));
 					}
-	       
-			
-		return false;
-		
-		
+				} else log.info(getConfig().getString("Error.ConsoleSender"));
+	return false;
 	}
+	public boolean TrueHash(Player player) {
+		
+		getHash().put(player, true);
+		return true;
+	}
+
 }
